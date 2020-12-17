@@ -1,0 +1,14 @@
+/SpecprParser/kaitai/specpr.py
+/kaitai-struct-compiler
+/kaitai_struct_formats
+
+__pycache__
+*.py[cod]
+/*.egg-info
+*.srctrlbm
+*.srctrldb
+build
+dist
+.eggs
+monkeytype.sqlite3
+/.ipynb_checkpoints

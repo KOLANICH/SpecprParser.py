@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=44", "wheel", "setuptools_scm[toml]>=3.4.3", "kaitaiStructCompile.setuptools[toml]"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+
+[tool.kaitai]
+outputDir = "SpecprParser/kaitai" # rel to localPath
+
+search = false
+inputDir = "scientific/spectroscopy"
+
+[tool.kaitai.repo]
+#git = "https://github.com/kaitai-io/kaitai_struct_formats.git"
+refspec = "master"
+update = true
+localPath = "kaitai_struct_formats" # rel to pyproject.toml dir
+
+[tool.kaitai.formats.specpr]
+path = "specpr.ksy"
+postprocess = ["permissiveDecoding"]

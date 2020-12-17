@@ -1,0 +1,45 @@
+image: registry.gitlab.com/kaitaistructcompile.py/kaitai_struct_python_docker
+stages:
+  - build
+  - test
+
+variables:
+  DOCKER_DRIVER: overlay2
+  SAST_ANALYZER_IMAGE_TAG: latest
+  SAST_DISABLE_DIND: "true"
+
+include:
+  - template: SAST.gitlab-ci.yml
+  - template: Code-Quality.gitlab-ci.yml
+
+build:
+  tags:
+    - shared
+  stage: build
+  variables:
+    GIT_DEPTH: "1"
+    PYTHONUSERBASE: "${CI_PROJECT_DIR}/python_user_packages"
+
+  before_script:
+    - export PATH="$PATH:$PYTHONUSERBASE/bin" # don't move into `variables`
+    - apt-get update
+    - apt-get install -y python3-numpy
+    - python3 ./.ci/fix_python_modules_paths.py
+ 
+  cache:
+    paths:
+      - $PYTHONUSERBASE
+      - kaitai_struct_formats
+
+  script:
+    - python3 setup.py bdist_wheel
+    - coverage run --source=SpecprParser --branch setup.py test
+    - pip3 install --upgrade --user ./dist/*.whl
+    - mkdir wheels
+    - mv ./dist/*.whl ./wheels/SpecprParser-0.CI-py3-none-any.whl
+    - coveralls || true
+    - codecov || true
+
+  artifacts:
+    paths:
+      - wheels
